@@ -1,12 +1,21 @@
-from web3 import Web3
+import sys
+from web3 import Web3, HTTPProvider
+from web3.middleware import geth_poa_middleware
 from vyper import compiler
 import sha3
 
 def _w3():
     return Web3(Web3.HTTPProvider("http://127.0.0.1:7545"))
 
-w3 = _w3()
+from web3.auto.gethdev import w3 as w
 
+if len(sys.argv) > 1 :
+    if sys.argv[1].lower() == 'geth':
+        w3 = w
+    else:
+        w3 = _w3()
+else:
+    w3 = _w3()
 
 with open('issue.vy') as f:
     source_code = f.read()
@@ -69,7 +78,7 @@ def test_by_transact(contract,func,value=0):
     payload = 'aaaa'
     transaction = {
         'from': w3.eth.accounts[0],
-        'gas': 20000000,
+        'gas': 200000,
         'value': value
     }
 
